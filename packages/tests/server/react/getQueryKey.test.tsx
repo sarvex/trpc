@@ -1,6 +1,7 @@
 import { getServerAndReactClient } from './__reactHelpers';
 import { useIsFetching } from '@tanstack/react-query';
 import { render, waitFor } from '@testing-library/react';
+import { getQueryKey } from '@trpc/react-query';
 import { initTRPC } from '@trpc/server';
 import { konn } from 'konn/dist-cjs';
 import React from 'react';
@@ -175,4 +176,11 @@ describe('getQueryKeys', () => {
       { input: { id: 1 }, type: 'query' },
     ]);
   });
+});
+
+test('external function', () => {
+  const { proxy } = ctx;
+  const queryKey = getQueryKey(proxy.post.all, undefined, 'query');
+
+  expect(queryKey).toEqual([['post', 'all'], { type: 'query' }]);
 });
