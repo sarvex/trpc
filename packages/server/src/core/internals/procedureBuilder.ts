@@ -149,15 +149,6 @@ export interface ProcedureBuilder<TParams extends ProcedureParams> {
     fn: MiddlewareFunction<TParams, $Params>,
   ): CreateProcedureReturnInput<TParams, $Params>;
   /**
-   * Extend the procedure with another procedure.
-   * @warning The TypeScript inference fails when chaining concatenated procedures.
-   */
-  unstable_concat<$ProcedureBuilder extends AnyProcedureBuilder>(
-    proc: $ProcedureBuilder,
-  ): $ProcedureBuilder extends ProcedureBuilder<infer $TParams>
-    ? CreateProcedureReturnInput<TParams, $TParams>
-    : never;
-  /**
    * Query procedure
    */
   query<$Output>(
@@ -247,13 +238,6 @@ export function createBuilder<TConfig extends AnyRootConfig>(
       return createNewBuilder(_def, {
         meta: meta as Record<string, unknown>,
       }) as AnyProcedureBuilder;
-    },
-    /**
-     * @deprecated
-     * This functionality is deprecated and will be removed in the next major version.
-     */
-    unstable_concat(builder) {
-      return createNewBuilder(_def, builder._def) as any;
     },
     use(middleware) {
       return createNewBuilder(_def, {
@@ -390,7 +374,6 @@ function createProcedureCaller(_def: AnyProcedureBuilderDef): AnyProcedure {
     return result.data;
   };
   procedure._def = _def;
-  procedure.meta = _def.meta;
 
   return procedure as AnyProcedure;
 }

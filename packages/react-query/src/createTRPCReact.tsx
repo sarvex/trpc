@@ -16,7 +16,7 @@ import {
   inferTransformedSubscriptionOutput,
 } from '@trpc/server/shared';
 import { useMemo } from 'react';
-import { QueryKey, QueryType } from './internals/getArrayQueryKey';
+import { QueryType, TRPCQueryKey } from './internals/getQueryKey';
 import { TRPCUseQueries } from './internals/useQueries';
 import {
   CreateReactUtilsProxy,
@@ -25,7 +25,7 @@ import {
 } from './shared';
 import {
   CreateReactQueryHooks,
-  createHooksInternal,
+  createRootHooks,
 } from './shared/hooks/createHooksInternal';
 import {
   CreateClient,
@@ -98,7 +98,7 @@ export type DecorateProcedure<
       getQueryKey: (
         input: inferProcedureInput<TProcedure>,
         type?: QueryType,
-      ) => QueryKey;
+      ) => TRPCQueryKey;
       useQuery: ProcedureUseQuery<TProcedure, TPath>;
     } & (inferProcedureInput<TProcedure> extends { cursor?: any }
       ? {
@@ -204,7 +204,7 @@ export type DecoratedProcedureRecord<
 > = {
   [TKey in keyof TProcedures]: TProcedures[TKey] extends AnyRouter
     ? {
-        getQueryKey: () => QueryKey;
+        getQueryKey: () => TRPCQueryKey;
       } & DecoratedProcedureRecord<
         TProcedures[TKey]['_def']['record'],
         TFlags,
@@ -271,7 +271,7 @@ export function createTRPCReact<
 >(
   opts?: CreateTRPCReactOptions<TRouter>,
 ): CreateTRPCReact<TRouter, TSSRContext, TFlags> {
-  const hooks = createHooksInternal<TRouter, TSSRContext>(opts);
+  const hooks = createRootHooks<TRouter, TSSRContext>(opts);
   const proxy = createHooksInternalProxy<TRouter, TSSRContext, TFlags>(hooks);
 
   return proxy as any;
