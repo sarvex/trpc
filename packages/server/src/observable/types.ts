@@ -2,7 +2,7 @@ export interface Unsubscribable {
   unsubscribe(): void;
 }
 export type UnsubscribeFn = () => void;
-export interface Subscribable<TValue, TError> {
+export interface Subscribable<TValue, TError = unknown> {
   subscribe(observer: Partial<Observer<TValue, TError>>): Unsubscribable;
 }
 export interface Observable<TValue, TError>

@@ -110,12 +110,7 @@ export class TRPCUntypedClient<TRouter extends AnyRouter> {
     this.links = opts.links.map((link) => link(this.runtime));
   }
 
-  private $request<TInput = unknown, TOutput = unknown>({
-    type,
-    input,
-    path,
-    context = {},
-  }: {
+  private $request<TInput = unknown, TOutput = unknown>(opts: {
     type: TRPCType;
     input: TInput;
     path: string;
@@ -125,10 +120,8 @@ export class TRPCUntypedClient<TRouter extends AnyRouter> {
       links: this.links as OperationLink<any, any, any>[],
       op: {
         id: ++this.requestId,
-        type,
-        path,
-        input,
-        context,
+        ...opts,
+        context: opts.context ?? {},
       },
     });
     return chain$.pipe(share());
